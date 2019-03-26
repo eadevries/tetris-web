@@ -1,0 +1,242 @@
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-family: Montserrat;
+    font-size: 10px;
+}
+
+body {
+    background-color: #444a44;
+}
+
+h1 {
+    color: #ccc;
+    margin: 3rem 0 2rem 0;
+    padding: 3rem 0 2rem 0;
+    font-family: "Contrail One", sans-serif;
+    font-size: 3rem;
+    font-weight: 400;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.game {
+    color: #fafafa;
+    font-size: 1.6rem;
+}
+
+.play-area {
+    /* background-color: #444; */
+    background-color: #222;
+    display: flex;
+    flex-direction: column;
+    height: 60rem;
+    justify-content: flex-end;
+    margin: 0 auto;
+    width: 30rem;
+}
+
+.side-panel {
+    color: #bbb;
+    font-size: 1.8rem;
+}
+
+.instructions {
+    background-color: #444;
+    border: 1px solid #222022;
+    display: flex;
+    font-size: 2rem;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: 20rem 2rem 0 2rem;
+    padding: 1rem 1rem;
+    width: 30rem;
+}
+
+.instructions p {
+    margin-top: 1rem;
+}
+
+.scoreboard {
+    align-content: center;
+    align-items: center;
+    background-color: #444;
+    border: 1px solid #222022;
+    display: flex;
+    height: 5rem;
+    justify-content: space-evenly;
+    margin: 2rem 2rem 0 2rem;
+    width: 30rem;
+}
+
+.restart-container {
+    align-items: center;
+    background-color: #444;
+    border: 1px solid #222022;
+    display: flex;
+    height: 5rem;
+    justify-content: center;
+    margin: 2rem 2rem 0 2rem;
+    width: 30rem;
+}
+
+.restart-container button {
+    background-color: #bbb;
+    border: 1px solid #222022;
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+}
+
+.tetris-box {
+    border-radius: 3px;
+    height: 3rem;
+    width: 3rem;
+}
+
+.tetris-row {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.tetris-blue-block {
+    background-color: #22c;
+}
+
+.tetris-blue-fixed-block {
+    background-color: #22a;
+}
+
+.tetris-red-block {
+    background-color: #c22;
+}
+
+.tetris-red-fixed-block {
+    background-color: #a22;
+}
+
+.tetris-green-block {
+    background-color: #2c2;
+}
+
+.tetris-green-fixed-block {
+    background-color: #2a2;
+}
+
+.tetris-yellow-block {
+    background-color: #cc2;
+}
+
+.tetris-yellow-fixed-block {
+    background-color: #aa2;
+}
+
+.tetris-purple-block {
+    background-color: #c2c;
+}
+
+.tetris-purple-fixed-block {
+    background-color: #a2a;
+}
+
+.tetris-orange-block {
+    background-color: #da2;
+}
+
+.tetris-orange-fixed-block {
+    background-color: #c82;
+}
+
+.tetris-brown-block {
+    background-color: rgb(161, 71, 19);
+}
+
+.tetris-brown-fixed-block {
+    background-color: rgb(120, 70, 12);
+}
+
+.tetris-active-block {
+    /* border: 1px solid #333; */
+    border: 1px solid black;
+    box-shadow: 2px 2px #222022;
+}
+
+.tetris-fixed-block {
+    /* border: 1px solid #333; */
+    border: 1px solid black;
+    box-shadow: 2px 2px #222022;
+}
+
+.tetris-hidden-row {
+    display: none;
+}
+
+.tetris-row-disappear {
+    height: 0;
+    margin: 0;
+    padding: 0;
+    transition: 0.3s all ease-out;
+}
+
+.tetris-box-disappear {
+    background-color: #444;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    transition: 0.3s all ease-out;
+}
+
+/* .temp-controls {
+    display: flex;
+    justify-content: space-around;
+    margin: 1rem auto 0 auto;
+    width: 30rem;
+} */
+
+.bottomborder {
+    border-bottom: 1px solid blue;
+}
+
+/* TEST STUFF: */
+
+.test-area {
+    align-content: center;
+    background-color: #444;
+    border: 1px solid #222022;
+    display: flex;
+    flex-direction: column;
+    height: 30rem;
+    justify-content: flex-end;
+    margin: 2rem auto;
+    padding: 1rem;
+    width: 25rem;
+}
+
+.test-row {
+    /* border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black; */
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-evenly;
+    width: 20rem;
+    height: 2rem;
+}
+
+.test-row-disappear {
+    height: 0;
+    margin: 0;
+    padding: 0;
+    transition: 0.2s all ease-out;
+}
