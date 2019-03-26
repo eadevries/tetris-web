@@ -4,7 +4,7 @@ const constants = {
     logState: true,
     numRows: 24,
     numCols: 10,
-    rowsPerSpeedIncrease: 1
+    rowsPerSpeedIncrease: 10
 };
 
 constants.iRotations = [
@@ -331,8 +331,9 @@ Game.gameLoop = (game, ui, tFrame) => {
             game.rowsCleared += clearedRowIndices.length;
             game.score += clearedRowIndices.length ** 2 * 100;
 
-            game.level = Math.floor(game.rowsCleared / 10) + 1;
+            game.level = Math.floor(game.rowsCleared / constants.rowsPerSpeedIncrease) + 1;
             game.tLength = Math.pow(0.85, game.level - 1) * 1000;
+            console.log(`Level: ${game.level}, tick length: ${game.tLength}`);
 
             UI.notifyScoreUpdate(ui, game.rowsCleared, game.score);
             game.gameOver = Game.checkForGameOver(game.state);
@@ -463,7 +464,7 @@ Game.handleInput = (game, ui, input) => {
                 game.rowsCleared += clearedRowIndices.length;
                 game.score += clearedRowIndices.length ** 2 * 100;
 
-                game.level = Math.floor(game.rowsCleared / 10) + 1;
+                game.level = Math.floor(game.rowsCleared / constants.rowsPerSpeedIncrease) + 1;
                 game.tLength = Math.pow(0.85, game.level - 1) * 1000;
 
                 UI.notifyScoreUpdate(ui, game.rowsCleared, game.score);
@@ -751,7 +752,7 @@ UI.clearRows = (ui, rowIndices) => {
                 }
             }
         };
-        setTimeout(window.requestAnimationFrame(removeFunc), constants.tLength);
+        setTimeout(window.requestAnimationFrame(removeFunc), constants.initialTickLength);
     }
 };
 
