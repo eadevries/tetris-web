@@ -123,7 +123,8 @@ constants.colorClassesArray = [
 
 constants.cssClasses = {
     ACTIVE_BLOCK: "tetris-active-block",
-    FIXED_BLOCK: "tetris-fixed-block"
+    FIXED_BLOCK: "tetris-fixed-block",
+    PREVIEW_AREA: "next-piece-preview"
 };
 
 function Piece(initPos, rotationSet, rotationIndex, color) {
@@ -331,7 +332,9 @@ Game.gameLoop = (game, ui, tFrame) => {
             game.rowsCleared += clearedRowIndices.length;
             game.score += clearedRowIndices.length ** 2 * 100;
 
-            game.level = Math.floor(game.rowsCleared / constants.rowsPerSpeedIncrease) + 1;
+            game.level =
+                Math.floor(game.rowsCleared / constants.rowsPerSpeedIncrease) +
+                1;
             game.tLength = Math.pow(0.85, game.level - 1) * 1000;
             console.log(`Level: ${game.level}, tick length: ${game.tLength}`);
 
@@ -357,6 +360,7 @@ Game.gameLoop = (game, ui, tFrame) => {
             if (!game.gameOver) {
                 game.currentPiece = game.nextPiece;
                 game.nextPiece = Piece.getRandomPiece(game.startPosition);
+                UI.notifyPreviewUpdate(ui, game.nextPiece);
             }
         }
     }
@@ -464,7 +468,10 @@ Game.handleInput = (game, ui, input) => {
                 game.rowsCleared += clearedRowIndices.length;
                 game.score += clearedRowIndices.length ** 2 * 100;
 
-                game.level = Math.floor(game.rowsCleared / constants.rowsPerSpeedIncrease) + 1;
+                game.level =
+                    Math.floor(
+                        game.rowsCleared / constants.rowsPerSpeedIncrease
+                    ) + 1;
                 game.tLength = Math.pow(0.85, game.level - 1) * 1000;
 
                 UI.notifyScoreUpdate(ui, game.rowsCleared, game.score);
@@ -488,6 +495,7 @@ Game.handleInput = (game, ui, input) => {
                 if (!game.gameOver) {
                     game.currentPiece = game.nextPiece;
                     game.nextPiece = Piece.getRandomPiece(game.startPosition);
+                    UI.notifyPreviewUpdate(ui, game.nextPiece);
                 }
             }
             break;
@@ -688,6 +696,9 @@ function UI() {
     // Get the play area element:
     const playArea = document.querySelector(".play-area");
 
+    // Get the preview element:
+    const previewArea = document.querySelector(".next-piece-preview");
+
     // Get the scoreboard element:
     const scoreboard = document.querySelector(".scoreboard");
 
@@ -695,6 +706,7 @@ function UI() {
         dirtyElements,
         listeners,
         playArea,
+        previewArea,
         scoreboard
     });
 }
@@ -752,7 +764,10 @@ UI.clearRows = (ui, rowIndices) => {
                 }
             }
         };
-        setTimeout(window.requestAnimationFrame(removeFunc), constants.initialTickLength);
+        setTimeout(
+            window.requestAnimationFrame(removeFunc),
+            constants.initialTickLength
+        );
     }
 };
 
@@ -779,6 +794,19 @@ UI.initialize = (ui, game) => {
         }
         ui.playArea.appendChild(row);
     }
+
+    ui.previewArea.innerHTML = "";
+    for (let j = 0; j < 6; j++) {
+        let row = document.createElement("div");
+        row.classList.add("tetris-row");
+        for (let i = 0; i < 6; i++) {
+            let box = document.createElement("div");
+            box.classList.add("tetris-preview-box");
+            row.appendChild(box);
+        }
+        ui.previewArea.appendChild(row);
+    }
+    UI.notifyPreviewUpdate(ui, game.nextPiece);
 
     UI.notifyScoreUpdate(ui, 0, 0);
 
@@ -817,6 +845,52 @@ UI.notifyBoxUpdates = (ui, coordList, classesToAdd, classesToRemove) => {
         let el = ui.playArea.children[coords[1]].children[coords[0]];
         ui.dirtyElements.push([el, classesToAdd, classesToRemove]);
     }
+    window.requestAnimationFrame(
+        UI.processDirtyElements.bind(null, ui.dirtyElements)
+    );
+};
+
+UI.notifyPreviewUpdate = (ui, nextPiece) => {
+    let lastEls = document.querySelectorAll(
+        `.${constants.cssClasses.PREVIEW_AREA} .${
+            constants.cssClasses.ACTIVE_BLOCK
+        }`
+    );
+    console.log(`lastEls has length ${lastEls.length}`);
+    for (let el of lastEls) {
+        ui.dirtyElements.push([
+            el,
+            null,
+            [constants.cssClasses.ACTIVE_BLOCK, ...constants.activeColorArray]
+        ]);
+    }
+
+    let nextPiecePosition = [1, 0];
+    if (
+        nextPiece.rotationSet === constants.zRotations ||
+        nextPiece.rotationSet === constants.sRotations
+    ) {
+        nextPiecePosition = [1, 0];
+    } else if (
+        nextPiece.rotationSet === constants.iRotations ||
+        nextPiece.rotationSet === constants.lRotations ||
+        nextPiece.rotationSet === constants.jRotations ||
+        nextPiece.rotationSet === constants.tRotations
+    ) {
+        nextPiecePosition = [1, 1];
+    }
+    const nextPieceCoords = Game.getAbsoluteCoords(
+        nextPiecePosition,
+        nextPiece.rotationSet[0]
+    );
+    for (let coords of nextPieceCoords) {
+        let el = ui.previewArea.children[coords[1]].children[coords[0]];
+        ui.dirtyElements.push([
+            el,
+            [nextPiece.color.active, constants.cssClasses.ACTIVE_BLOCK]
+        ]);
+    }
+
     window.requestAnimationFrame(
         UI.processDirtyElements.bind(null, ui.dirtyElements)
     );
