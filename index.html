@@ -19,21 +19,38 @@
             </div>
             <div class="side-panel">
                 <div class="next-piece-container">
-                    <p>Next Piece</p>
+                    <h2>Next Piece</h2>
                     <div class="next-piece-preview"></div>
                 </div>
                 <div class="instructions">
-                    <p>Controls:</p>
-                    <p>Left: A, Down: S, Right: D</p>
-                    <p>Rotate: Q and E</p>
+                    <h2>Controls:</h2>
+                    <p>
+                        left: <span class="control">A</span>, down:
+                        <span class="control">S</span>, right:
+                        <span class="control">D</span>
+                    </p>
+                    <p>
+                        rotate: <span class="control">Q</span> &
+                        <span class="control">E</span>
+                    </p>
+                    <p>pause: <span class="control">SPACE</span></p>
                 </div>
                 <div class="scoreboard">
-                    <div>Score: 0</div>
-                    <div>Rows Cleared: 0</div>
+                    <div>
+                        <span class="score-label">Score:</span>
+                        <span class="score">0</span>
+                    </div>
+                    <div>
+                        <span class="score-label">Rows Cleared:</span>
+                        <span class="rows-cleared">0</span>
+                    </div>
                 </div>
                 <div class="restart-container">
                     <button class="restart-button">Restart</button>
                 </div>
+            </div>
+            <div class="pause-display">
+                <p>press <span class="control">SPACE</span> to unpause</p>
             </div>
         </div>
         <script src="tetris.js"></script>

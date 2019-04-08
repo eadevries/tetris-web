@@ -124,6 +124,7 @@ constants.colorClassesArray = [
 constants.cssClasses = {
     ACTIVE_BLOCK: "tetris-active-block",
     FIXED_BLOCK: "tetris-fixed-block",
+    PAUSE_DISPLAY: "pause-display",
     PREVIEW_AREA: "next-piece-preview"
 };
 
@@ -204,6 +205,7 @@ function Game(initialState = []) {
     // Initialize settings:
     const controlsDisabled = false;
     const gameOver = false;
+    const paused = false;
 
     // Initialize game statistics:
     const level = 1;
@@ -225,6 +227,7 @@ function Game(initialState = []) {
         level,
         gameOver,
         nextPiece,
+        paused,
         rowsCleared,
         score,
         startPosition,
@@ -265,17 +268,31 @@ Game.checkForGameOver = state => {
     return false;
 };
 
-Game.directions = {
+Game.controls = {
+    // Piece movement:
     LEFT: "left",
     RIGHT: "right",
     DOWN: "down",
     CW: "clockwise",
-    CCW: "counter-clockwise"
+    CCW: "counter-clockwise",
+    // Game settings/options:
+    PAUSE: "pause"
 };
 
 Game.gameLoop = (game, ui, tFrame) => {
     if (game.gameOver) {
         console.log("Game Over! Thanks for playing!");
+        return;
+    } else if (game.paused) {
+        if (game.tStart && tFrame - game.tStart > game.tLength) {
+            game.tStart += game.tLength;
+        }
+        window.requestAnimationFrame(Game.gameLoop.bind(null, game, ui));
+        return;
+    } else if (!game.paused && !document.hasFocus()) {
+        game.paused = true;
+        UI.togglePauseDisplay(ui, game.paused);
+        window.requestAnimationFrame(Game.gameLoop.bind(null, game, ui));
         return;
     }
 
@@ -288,7 +305,7 @@ Game.gameLoop = (game, ui, tFrame) => {
         const result = Game.tryMove(
             game.currentPiece,
             game.state,
-            Game.directions.DOWN
+            Game.controls.DOWN
         );
 
         if (result) {
@@ -381,17 +398,24 @@ Game.handleInput = (game, ui, input) => {
         console.log(input);
     }
 
-    if (game.controlsDisabled) {
+    if (input === Game.controls.PAUSE) {
+        game.paused = !game.paused;
+        UI.togglePauseDisplay(ui, game.paused);
+        window.requestAnimationFrame(Game.gameLoop.bind(null, game, ui));
+        return;
+    }
+
+    if (game.controlsDisabled || game.paused) {
         return;
     }
 
     var moveResult;
     switch (input) {
-        case Game.directions.LEFT:
+        case Game.controls.LEFT:
             moveResult = Game.tryMove(
                 game.currentPiece,
                 game.state,
-                Game.directions.LEFT
+                Game.controls.LEFT
             );
             if (!moveResult) return;
 
@@ -418,11 +442,11 @@ Game.handleInput = (game, ui, input) => {
             );
             game.currentPiece.position = moveResult[0];
             break;
-        case Game.directions.DOWN:
+        case Game.controls.DOWN:
             moveResult = Game.tryMove(
                 game.currentPiece,
                 game.state,
-                Game.directions.DOWN
+                Game.controls.DOWN
             );
             if (moveResult) {
                 UI.notifyBoxUpdates(
@@ -499,11 +523,11 @@ Game.handleInput = (game, ui, input) => {
                 }
             }
             break;
-        case Game.directions.RIGHT:
+        case Game.controls.RIGHT:
             moveResult = Game.tryMove(
                 game.currentPiece,
                 game.state,
-                Game.directions.RIGHT
+                Game.controls.RIGHT
             );
             if (!moveResult) return;
 
@@ -529,11 +553,11 @@ Game.handleInput = (game, ui, input) => {
             );
             game.currentPiece.position = moveResult[0];
             break;
-        case Game.directions.CCW:
+        case Game.controls.CCW:
             moveResult = Game.tryRotate(
                 game.currentPiece,
                 game.state,
-                Game.directions.CCW
+                Game.controls.CCW
             );
             if (!moveResult) return;
             UI.notifyBoxUpdates(
@@ -556,11 +580,11 @@ Game.handleInput = (game, ui, input) => {
             game.currentPiece.shape =
                 game.currentPiece.rotationSet[moveResult[0]];
             break;
-        case Game.directions.CW:
+        case Game.controls.CW:
             moveResult = Game.tryRotate(
                 game.currentPiece,
                 game.state,
-                Game.directions.CW
+                Game.controls.CW
             );
             if (!moveResult) return;
             UI.notifyBoxUpdates(
@@ -622,13 +646,13 @@ Game.startLoop = (game, ui) => {
 Game.tryMove = (piece, state, direction) => {
     var newPos;
     switch (direction) {
-        case Game.directions.LEFT:
+        case Game.controls.LEFT:
             newPos = [piece.position[0] - 1, piece.position[1]];
             break;
-        case Game.directions.RIGHT:
+        case Game.controls.RIGHT:
             newPos = [piece.position[0] + 1, piece.position[1]];
             break;
-        case Game.directions.DOWN:
+        case Game.controls.DOWN:
             newPos = [piece.position[0], piece.position[1] + 1];
             break;
         default:
@@ -642,13 +666,13 @@ Game.tryRotate = (piece, state, direction) => {
     var newRotationIndex;
     var newShape;
     switch (direction) {
-        case Game.directions.CCW:
+        case Game.controls.CCW:
             newRotationIndex =
                 (piece.rotationIndex + 1) % piece.rotationSet.length;
 
             newShape = piece.rotationSet[newRotationIndex];
             break;
-        case Game.directions.CW:
+        case Game.controls.CW:
             newRotationIndex =
                 (piece.rotationIndex + piece.rotationSet.length - 1) %
                 piece.rotationSet.length;
@@ -696,15 +720,24 @@ function UI() {
     // Get the play area element:
     const playArea = document.querySelector(".play-area");
 
+    // Get the pause display element:
+    const pauseDisplay = document.querySelector(
+        `.${constants.cssClasses.PAUSE_DISPLAY}`
+    );
+
     // Get the preview element:
     const previewArea = document.querySelector(".next-piece-preview");
 
     // Get the scoreboard element:
-    const scoreboard = document.querySelector(".scoreboard");
+    const scoreboard = {
+        rowsCleared: document.querySelector(".scoreboard .rows-cleared"),
+        score: document.querySelector(".scoreboard .score")
+    };
 
     return Object.create({
         dirtyElements,
         listeners,
+        pauseDisplay,
         playArea,
         previewArea,
         scoreboard
@@ -714,11 +747,12 @@ function UI() {
 UI.cssClassMap = {};
 
 UI.keyBindings = {
-    a: Game.directions.LEFT,
-    s: Game.directions.DOWN,
-    d: Game.directions.RIGHT,
-    q: Game.directions.CCW,
-    e: Game.directions.CW
+    a: Game.controls.LEFT,
+    s: Game.controls.DOWN,
+    d: Game.controls.RIGHT,
+    q: Game.controls.CCW,
+    e: Game.controls.CW,
+    " ": Game.controls.PAUSE
 };
 
 UI.handleKeyPress = (game, ui, event) => {
@@ -729,12 +763,7 @@ UI.handleKeyPress = (game, ui, event) => {
     var key = event.key || event.keyCode;
     key = key.toLowerCase();
     const input = UI.keyBindings[key] || null;
-    if (input) {
-        console.log(key, input);
-        Game.handleInput(game, ui, input);
-    } else {
-        console.log(key);
-    }
+    Game.handleInput(game, ui, input);
 };
 
 UI.cleanUpListeners = listeners => {
@@ -822,6 +851,9 @@ UI.initialize = (ui, game) => {
 UI.initializeRestartButton = restartFunc => {
     const restartButton = document.querySelector(".restart-container button");
     restartButton.addEventListener("click", restartFunc);
+    // TODO: consider alternate methods of preventing accidental spacebar based
+    // button clicks when a game is in progress.
+    restartButton.addEventListener("keyup", event => event.preventDefault());
 };
 
 UI.newUIRow = () => {
@@ -897,8 +929,8 @@ UI.notifyPreviewUpdate = (ui, nextPiece) => {
 };
 
 UI.notifyScoreUpdate = (ui, rowsCleared, score) => {
-    ui.scoreboard.children[0].textContent = `Score: ${score}`;
-    ui.scoreboard.children[1].textContent = `Rows Cleared: ${rowsCleared}`;
+    ui.scoreboard.rowsCleared.textContent = rowsCleared;
+    ui.scoreboard.score.textContent = score;
 };
 
 UI.processDirtyElements = dirtyElements => {
@@ -909,6 +941,11 @@ UI.processDirtyElements = dirtyElements => {
     }
 };
 
+UI.togglePauseDisplay = (ui, paused) => {
+    console.log(`Game is paused: ${paused}`);
+    ui.pauseDisplay.style.display = paused ? "block" : "none";
+};
+
 (function runTetris() {
     console.log("Starting game!");
     var ui = UI();
@@ -917,7 +954,11 @@ UI.processDirtyElements = dirtyElements => {
     UI.initialize(ui, game);
     Game.startLoop(game, ui);
 
-    function restartGame() {
+    function restartGame(event) {
+        event.preventDefault();
+        if (event.key && event.key === "32") {
+            return;
+        }
         ui.dirtyElements = [];
         UI.cleanUpListeners(ui.listeners);
         game.gameOver = true;

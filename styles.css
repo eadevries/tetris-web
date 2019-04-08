@@ -16,11 +16,11 @@ body {
 }
 
 h1 {
-    color: #ccc;
+    color: #ddd;
     margin: 3rem 0 2rem 0;
     padding: 3rem 0 2rem 0;
     font-family: "Contrail One", sans-serif;
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 400;
     text-align: center;
 }
@@ -37,13 +37,49 @@ h1 {
 }
 
 .play-area {
-    background-color: #222;
+    background-color: #282828;
+    border: 1px solid black;
+    border-radius: 3px;
+    box-shadow: 2px 1px #222022;
     display: flex;
     flex-direction: column;
     height: 60rem;
     justify-content: flex-end;
     margin: 0 auto;
+    overflow: hidden;
     width: 30rem;
+}
+
+.pause-display {
+    animation: pause-flash 4s linear infinite;
+    border: 1px solid #222022;
+    border-radius: 3px;
+    box-shadow: 2px 2px #222022;
+    display: none;
+    font-size: 2rem;
+    padding: 1rem 3rem;
+    position: absolute;
+    text-align: center;
+    top: 37rem;
+}
+
+.pause-display h2 {
+    font-family: "Contrail One", sans-serif;
+}
+
+@keyframes pause-flash {
+    0% {
+        background-color: #666666;
+        color: #222;
+    }
+    50% {
+        background-color: #cccccc;
+        color: #000;
+    }
+    100% {
+        background-color: #666666;
+        color: #222;
+    }
 }
 
 .side-panel {
@@ -55,13 +91,21 @@ h1 {
     align-items: center;
     background-color: #444;
     border: 1px solid #222022;
+    border-radius: 3px;
+    box-shadow: 2px 1px #222022;
     display: flex;
     flex-direction: column;
     font-size: 2rem;
     justify-content: center;
     height: 20rem;
-    margin: 5rem 2rem 0 2rem;
+    margin: 2rem 2rem 0 2rem;
     width: 30rem;
+}
+
+.next-piece-container h2 {
+    color: #ddd;
+    font-family: "Contrail One", sans-serif;
+    font-weight: 400;
 }
 
 .next-piece-preview {
@@ -80,6 +124,8 @@ h1 {
 .instructions {
     background-color: #444;
     border: 1px solid #222022;
+    border-radius: 3px;
+    box-shadow: 2px 1px #222022;
     display: flex;
     font-size: 2rem;
     flex-direction: column;
@@ -89,8 +135,21 @@ h1 {
     width: 30rem;
 }
 
+.instructions h2 {
+    color: #ddd;
+    font-family: "Contrail One", sans-serif;
+    font-weight: 400;
+}
+
 .instructions p {
     margin-top: 1rem;
+}
+
+.control {
+    color: #ddd;
+    font-family: "Contrail One", sans-serif;
+    font-size: 2.4rem;
+    font-weight: 700;
 }
 
 .scoreboard {
@@ -98,6 +157,8 @@ h1 {
     align-items: center;
     background-color: #444;
     border: 1px solid #222022;
+    border-radius: 3px;
+    box-shadow: 2px 1px #222022;
     display: flex;
     height: 5rem;
     justify-content: space-evenly;
@@ -105,20 +166,32 @@ h1 {
     width: 30rem;
 }
 
+.scoreboard .score-label {
+    color: #ddd;
+    font-family: "Contrail One", sans-serif;
+    font-size: 2rem;
+}
+
 .restart-container {
     align-items: center;
     background-color: #444;
     border: 1px solid #222022;
+    border-radius: 3px;
+    box-shadow: 2px 1px #222022;
     display: flex;
     height: 5rem;
     justify-content: center;
     margin: 2rem 2rem 0 2rem;
+    padding-bottom: 3rem;
+    padding-top: 3rem;
     width: 30rem;
 }
 
 .restart-container button {
     background-color: #bbb;
     border: 1px solid #222022;
+    border-radius: 3px;
+    font-family: "Contrail One", sans-serif;
     font-size: 2rem;
     padding: 0.5rem 1rem;
 }
@@ -191,12 +264,12 @@ h1 {
 }
 
 .tetris-active-block {
-    border: 1px solid black;
+    border: 1px solid #111;
     box-shadow: 2px 2px #222022;
 }
 
 .tetris-fixed-block {
-    border: 1px solid black;
+    border: 1px solid #111;
     box-shadow: 2px 2px #222022;
 }
 

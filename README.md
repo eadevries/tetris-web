@@ -13,7 +13,9 @@ A live version of this project can currently be seen and played at https://codep
 ## Features to be Added:
 
 -   ~~Preview of next block~~ - Added April 4, 2019.
--   Pause functionality
--   Autopause on window losing focus
+-   ~~Pause functionality~~ - Added April 8, 2019
+-   ~~Autopause on window losing focus~~ - Added April 8, 2019
+-   Proper startup screen
+-   Proper gameover screen
 -   Many improvements to page appearence and theme
 -   (Potentially) optional sound/music
