@@ -281,7 +281,9 @@ Game.controls = {
 
 Game.gameLoop = (game, ui, tFrame) => {
     if (game.gameOver) {
-        console.log("Game Over! Thanks for playing!");
+        if (constants.logState && constants.logLevel !== "stateOnly") {
+            console.log("Game Over! Thanks for playing!");
+        }
         return;
     } else if (game.paused) {
         if (game.tStart && tFrame - game.tStart > game.tLength) {
@@ -353,7 +355,11 @@ Game.gameLoop = (game, ui, tFrame) => {
                 Math.floor(game.rowsCleared / constants.rowsPerSpeedIncrease) +
                 1;
             game.tLength = Math.pow(0.85, game.level - 1) * 1000;
-            console.log(`Level: ${game.level}, tick length: ${game.tLength}`);
+            if (constants.logState && constants.logLevel !== "stateOnly") {
+                console.log(
+                    `Level: ${game.level}, tick length: ${game.tLength}`
+                );
+            }
 
             UI.notifyScoreUpdate(ui, game.rowsCleared, game.score);
             game.gameOver = Game.checkForGameOver(game.state);
@@ -888,7 +894,6 @@ UI.notifyPreviewUpdate = (ui, nextPiece) => {
             constants.cssClasses.ACTIVE_BLOCK
         }`
     );
-    console.log(`lastEls has length ${lastEls.length}`);
     for (let el of lastEls) {
         ui.dirtyElements.push([
             el,
@@ -942,12 +947,16 @@ UI.processDirtyElements = dirtyElements => {
 };
 
 UI.togglePauseDisplay = (ui, paused) => {
-    console.log(`Game is paused: ${paused}`);
+    if (constants.logState && constants.logLevel !== "stateOnly") {
+        console.log(`Game is paused: ${paused}`);
+    }
     ui.pauseDisplay.style.display = paused ? "block" : "none";
 };
 
 (function runTetris() {
-    console.log("Starting game!");
+    if (constants.logState && constants.logLevel !== "stateOnly") {
+        console.log("Starting game!");
+    }
     var ui = UI();
     // var game = Game(test.stateDescriptions.SINGLE_LINE_CLEAR);
     var game = Game();
